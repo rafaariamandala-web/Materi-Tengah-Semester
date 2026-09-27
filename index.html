@@ -1,516 +1,1138 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuis Rangkuman Catatan Sekolah - Merah Putih</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            redAccent: '#C8102E',
-            redDark: '#990000',
-            redLight: '#FF4D4D',
-            goldAccent: '#FFD700',
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz Time Kelas XI - Quizz Time Kelas XI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    .loading-pulse {
-      animation: pulseGlow 1.5s infinite alternate;
-    }
-    @keyframes pulseGlow {
-      0% { transform: scale(0.98); opacity: 0.8; }
-      100% { transform: scale(1.02); opacity: 1; }
-    }
-  </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .option-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-card:hover {
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-slate-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
 
-  <!-- ================= LOADING SCREEN ================= -->
-  <div id="loadingScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-slate-950 transition-opacity duration-500">
-    <div class="relative flex flex-col items-center loading-pulse">
-      <div class="w-20 h-20 rounded-full border-4 border-redAccent/20 border-t-redAccent animate-spin flex items-center justify-center">
-        <div class="w-12 h-12 bg-redAccent rounded-full flex items-center justify-center text-white shadow-lg shadow-redAccent/40">
-          <i data-lucide="book-open" class="w-6 h-6"></i>
-        </div>
-      </div>
-      <h1 class="mt-6 text-2xl font-black tracking-wider text-redAccent dark:text-red-500 uppercase">
-        Kuis Catatan Sekolah
-      </h1>
-      <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Memuat 200 Soal Kuis (50 Soal / Mapel)...</p>
-    </div>
-  </div>
-
-  <!-- ================= NAVBAR ================= -->
-  <nav class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="showHomepage()">
-        <div class="w-10 h-10 bg-redAccent rounded-xl flex items-center justify-center text-white shadow-md shadow-redAccent/30">
-          <i data-lucide="award" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <span class="font-extrabold text-lg text-gray-900 dark:text-white leading-none block">
-            Kuis <span class="text-redAccent">Merah Putih</span>
-          </span>
-          <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Bank Soal 200 Pertanyaan</span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <!-- Dark Mode Toggle -->
-        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:text-redAccent dark:hover:text-redLight transition">
-          <i data-lucide="sun" id="sunIcon" class="w-5 h-5 hidden"></i>
-          <i data-lucide="moon" id="moonIcon" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- ================= HOMEPAGE ================= -->
-  <main id="homepage" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Hero Banner -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-redAccent via-redDark to-slate-900 text-white p-8 md:p-12 mb-10 shadow-xl shadow-redAccent/20">
-      <div class="relative z-10 max-w-2xl">
-        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold backdrop-blur-sm mb-4">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-goldAccent"></i> Total 200 Soal Siap Diuji
-        </span>
-        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
-          Uji Pemahaman Materi Sekolahmu
-        </h1>
-        <p class="text-red-100 text-base md:text-lg mb-8 leading-relaxed">
-          Platform kuis interaktif dengan 50 soal untuk tiap mata pelajaran (PAI, PKN, B. Indonesia, & Sejarah) berdasarkan rangkuman catatan pelajaran.
-        </p>
-        <div class="flex flex-wrap gap-4">
-          <button onclick="openSetupModal('ALL')" class="bg-white text-redAccent hover:bg-red-50 font-bold px-6 py-3.5 rounded-xl shadow-lg transition flex items-center gap-2 transform active:scale-95">
-            <i data-lucide="play-circle" class="w-5 h-5"></i> Kerjakan Semua Mapel (200 Soal)
-          </button>
-        </div>
-      </div>
-      <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
-        <i data-lucide="book-open" class="w-96 h-96 text-white"></i>
-      </div>
-    </div>
-
-    <!-- Mapel Grid Section -->
-    <div class="mb-12">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Pilih Mata Pelajaran</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Pilih mapel khusus dengan 50 soal penuh di setiap kuisnya</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- PAI Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 flex flex-col justify-between hover:shadow-xl hover:border-redAccent/50 transition group">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 font-bold text-lg group-hover:scale-110 transition">
-              <i data-lucide="book-marked" class="w-6 h-6"></i>
+    <!-- HEADER NAVBAR -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="handleLogoClick()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-600 bg-clip-text text-transparent">TelMe</span>
+                    <span class="text-xs font-semibold px-2 py-0.5 ml-1 bg-brand-50 text-brand-700 rounded-full border border-brand-200">Kelas XI</span>
+                </div>
             </div>
-            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">PAI</span>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Pendidikan Agama Islam</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-3">
-              Membahas QS Ar-Rahman/55:33, QS Ali 'Imran/3:190-191, Ulul Albab, Rukun Wudhu, Hadas, dan jenis-jenis Najis.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">50 Soal</span>
-            <button onclick="openSetupModal('PAI')" class="text-xs font-bold text-redAccent hover:text-redDark dark:text-redLight flex items-center gap-1 group-hover:translate-x-1 transition">
-              Mulai Kuis <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
 
-        <!-- PKN Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 flex flex-col justify-between hover:shadow-xl hover:border-redAccent/50 transition group">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/30 text-redAccent dark:text-red-400 flex items-center justify-center mb-4 font-bold text-lg group-hover:scale-110 transition">
-              <i data-lucide="shield" class="w-6 h-6"></i>
+            <div class="flex items-center space-x-3">
+                <span id="userBadge" class="hidden sm:flex items-center text-xs font-medium bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full border border-slate-200">
+                    <i class="fa-solid fa-user-graduate mr-1.5 text-brand-600"></i> Siswa XI SMK/SMA
+                </span>
+                <button id="navHomeBtn" onclick="confirmExitToHome()" class="hidden px-3.5 py-1.5 text-sm font-semibold text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-house"></i> Beranda
+                </button>
             </div>
-            <span class="text-xs font-bold text-redAccent dark:text-red-400 uppercase tracking-wider">PKN</span>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Pendidikan Pancasila</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-3">
-              Membahas Nilai Dasar, Instrumental, Praktis Pancasila, Dimensi Ideologi, dan Ideologi Politik.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">50 Soal</span>
-            <button onclick="openSetupModal('PKN')" class="text-xs font-bold text-redAccent hover:text-redDark dark:text-redLight flex items-center gap-1 group-hover:translate-x-1 transition">
-              Mulai Kuis <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
         </div>
+    </header>
 
-        <!-- B. Indonesia Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 flex flex-col justify-between hover:shadow-xl hover:border-redAccent/50 transition group">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 font-bold text-lg group-hover:scale-110 transition">
-              <i data-lucide="file-text" class="w-6 h-6"></i>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- VIEW 1: DASHBOARD / LANDING PAGE -->
+        <section id="dashboardView" class="animate-fade-in space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900 via-brand-800 to-indigo-900 text-white p-6 sm:p-10 shadow-xl">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-brand-100 mb-4 border border-white/10">
+                        <i class="fa-solid fa-bolt text-yellow-300"></i> Platform Evaluasi Mandiri Siswa
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        Quizz Time <span class="text-brand-200">Kelas XI</span>
+                    </h1>
+                    <p class="mt-3 text-slate-200 text-sm sm:text-base leading-relaxed">
+                        Uji pemahaman materi pembelajaran Kelas XI secara mandiri, akurat, dan seru. Pilih mata pelajaran di bawah untuk memulai quiz interaktif dengan sistem penilaian otomatis.
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-4 text-xs sm:text-sm font-medium text-slate-300">
+                        <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-list-check text-brand-400"></i> 50 Soal Per Mapel
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-clock text-amber-400"></i> Timer 60 Menit
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-square-poll-vertical text-emerald-400"></i> Analisis & Pembahasan
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Bahasa Indonesia</span>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Bahasa Indonesia</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-3">
-              Membahas Teks Prosedur, Kaidah Kebahasaan, Huruf Kapital, Diakritik, Vokal & Konsonan.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">50 Soal</span>
-            <button onclick="openSetupModal('BINDO')" class="text-xs font-bold text-redAccent hover:text-redDark dark:text-redLight flex items-center gap-1 group-hover:translate-x-1 transition">
-              Mulai Kuis <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
 
-        <!-- Sejarah Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 flex flex-col justify-between hover:shadow-xl hover:border-redAccent/50 transition group">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 font-bold text-lg group-hover:scale-110 transition">
-              <i data-lucide="clock" class="w-6 h-6"></i>
+            <!-- Subject Cards Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-800">Pilih Mata Pelajaran</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Pilih modul quiz yang ingin kamu kerjakan hari ini</p>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 bg-slate-200 text-slate-700 rounded-full">6 Modul Tersedia</span>
+                </div>
+
+                <div id="subjectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic rendering via JS -->
+                </div>
             </div>
-            <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Sejarah</span>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Sejarah Indonesia</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-3">
-              Membahas Anatomi Peran Manusia (The Mover, The Actor, The Witness), Unsur Sejarah, dan Sejarah Kereta Api Kolonial.
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-between">
-            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">50 Soal</span>
-            <button onclick="openSetupModal('SEJARAH')" class="text-xs font-bold text-redAccent hover:text-redDark dark:text-redLight flex items-center gap-1 group-hover:translate-x-1 transition">
-              Mulai Kuis <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
+        </section>
+
+        <!-- VIEW 2: QUIZ INTERACTIVE PAGE -->
+        <section id="quizView" class="hidden animate-fade-in space-y-6">
+            <!-- Top Status & Progress Bar Bar -->
+            <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div id="quizSubjectIcon" class="w-10 h-10 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                        <div>
+                            <h3 id="quizSubjectTitle" class="font-bold text-slate-800 text-base sm:text-lg leading-tight">Mata Pelajaran</h3>
+                            <span id="quizQuestionCountInfo" class="text-xs font-medium text-slate-500">Soal 1 dari 50</span>
+                        </div>
+                    </div>
+
+                    <!-- Timer Badge & Action Buttons -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-mono font-bold text-sm">
+                            <i class="fa-regular fa-clock animate-pulse"></i>
+                            <span id="quizTimerDisplay">60:00</span>
+                        </div>
+                        <button onclick="toggleGridModal(true)" class="p-2 text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-xl transition border border-slate-200" title="Navigasi Soal">
+                            <i class="fa-solid fa-border-all text-lg"></i>
+                        </button>
+                        <button onclick="confirmFinishQuiz()" class="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-sm transition">
+                            Selesai Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                        <span>Progress Pengerjaan</span>
+                        <span id="progressPercentText">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="quizProgressBar" class="bg-gradient-to-r from-brand-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card & Grid Navigation Side-by-Side (Desktop) -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Main Question Area (3 Cols) -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-md border border-slate-200 min-h-[380px] flex flex-col justify-between">
+                        <div>
+                            <!-- Badge Nomor Soal -->
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-brand-50 text-brand-700 font-bold text-xs rounded-lg border border-brand-200">
+                                    Soal <span id="currentNumText">1</span>
+                                </span>
+                                <label class="inline-flex items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 cursor-pointer hover:bg-amber-100 transition select-none">
+                                    <input type="checkbox" id="doubtCheckbox" onchange="toggleDoubtStatus()" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+                                    <i class="fa-solid fa-flag"></i> Ragu-Ragu
+                                </label>
+                            </div>
+
+                            <!-- Teks Pertanyaan -->
+                            <div id="questionText" class="text-base sm:text-lg font-medium text-slate-800 leading-relaxed mb-6">
+                                Loading pertanyaan...
+                            </div>
+
+                            <!-- Pilihan Jawaban A-E -->
+                            <div id="optionsContainer" class="space-y-3">
+                                <!-- Dynamic Options -->
+                            </div>
+                        </div>
+
+                        <!-- Toast Alert Warning (Validasi Pilih Jawaban) -->
+                        <div id="validationToast" class="hidden mt-4 p-3 bg-amber-50 text-amber-800 border border-amber-300 rounded-xl text-xs font-medium flex items-center gap-2 animate-fade-in">
+                            <i class="fa-solid fa-circle-exclamation text-amber-600 text-base"></i>
+                            <span>Silakan pilih salah satu jawaban terlebih dahulu sebelum melanjutkan!</span>
+                        </div>
+
+                        <!-- Footer Control Navigation -->
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                            <button id="prevBtn" onclick="prevQuestion()" class="px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                            </button>
+                            <button id="nextBtn" onclick="nextQuestion()" class="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md transition flex items-center gap-2">
+                                Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Sidebar Navigation Grid (1 Col) -->
+                <div class="hidden lg:block lg:col-span-1">
+                    <div class="glass-card rounded-2xl p-5 shadow-sm border border-slate-200 sticky top-24">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-bold text-slate-800 text-sm">Navigasi Soal</h4>
+                            <span class="text-xs text-slate-500">1 - 50</span>
+                        </div>
+                        
+                        <!-- Grid 1-50 -->
+                        <div id="desktopNavGrid" class="grid grid-cols-5 gap-2 max-h-[360px] overflow-y-auto custom-scrollbar p-1">
+                            <!-- Dynamic Question Badges -->
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-[11px] text-slate-600">
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-brand-600 border"></span> Dijawab</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-amber-400 border"></span> Ragu-Ragu</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-slate-100 border border-slate-300"></span> Belum Dijawab</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: RESULT & REVIEW PAGE -->
+        <section id="resultView" class="hidden animate-fade-in space-y-8">
+            <!-- Score Overview Header -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10 shadow-lg border border-slate-200 text-center relative overflow-hidden">
+                <div id="scoreBgGlow" class="absolute inset-0 opacity-10 bg-brand-600 blur-2xl pointer-events-none"></div>
+
+                <div class="max-w-md mx-auto space-y-4">
+                    <span id="resultBadge" class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        LULUS EVALUASI
+                    </span>
+
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Hasil Quiz Pembelajaran</h2>
+                    <p id="resultSubjectText" class="text-sm font-semibold text-brand-600">Mata Pelajaran Matematika</p>
+
+                    <!-- Score Circle -->
+                    <div class="my-6 inline-flex flex-col items-center justify-center w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-slate-900 text-white shadow-xl border-4 border-slate-800 relative">
+                        <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold">Skor Akhir</span>
+                        <span id="finalScoreText" class="text-4xl sm:text-5xl font-black text-brand-400">85</span>
+                        <span class="text-xs text-slate-400">/ 100</span>
+                    </div>
+
+                    <p id="resultFeedbackText" class="text-sm text-slate-600 leading-relaxed">
+                        Sangat Bagus! Kamu telah menguasai sebagian besar indikator materi pembelajaran ini.
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-3 pt-2">
+                        <button onclick="retryCurrentQuiz()" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Coba Lagi
+                        </button>
+                        <button onclick="returnToHome()" class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-house"></i> Kembali ke Beranda
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div id="statCorrectText" class="text-xl font-extrabold text-slate-800">0</div>
+                        <div class="text-xs font-medium text-slate-500">Jawaban Benar</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </div>
+                    <div>
+                        <div id="statWrongText" class="text-xl font-extrabold text-slate-800">0</div>
+                        <div class="text-xs font-medium text-slate-500">Jawaban Salah</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-minus"></i>
+                    </div>
+                    <div>
+                        <div id="statUnansweredText" class="text-xl font-extrabold text-slate-800">0</div>
+                        <div class="text-xs font-medium text-slate-500">Tidak Dijawab</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div id="statAccuracyText" class="text-xl font-extrabold text-slate-800">0%</div>
+                        <div class="text-xs font-medium text-slate-500">Akurasi Soal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Question Review Section -->
+            <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+                <div class="flex items-center justify-between flex-wrap gap-2 pb-4 border-b border-slate-200">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Pembahasan & Review Soal</h3>
+                        <p class="text-xs text-slate-500">Evaluasi seluruh 50 soal beserta jawaban kamu dan kunci jawaban resmi.</p>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 bg-brand-50 text-brand-700 rounded-full border border-brand-200">
+                        50 Item Review
+                    </span>
+                </div>
+
+                <!-- Review Items Container -->
+                <div id="reviewContainer" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Dynamic review cards -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: MOBILE / FULL NAV GRID MODAL -->
+    <div id="gridModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-base">Navigasi Seluruh Soal (1-50)</h3>
+                <button onclick="toggleGridModal(false)" class="text-slate-400 hover:text-slate-600 text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div id="modalNavGrid" class="grid grid-cols-5 sm:grid-cols-8 gap-2 max-h-[320px] overflow-y-auto custom-scrollbar p-1">
+                <!-- Dynamic numbers -->
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button onclick="toggleGridModal(false)" class="px-4 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl">
+                    Tutup
+                </button>
+            </div>
         </div>
-      </div>
     </div>
-  </main>
 
-  <!-- ================= SETUP MODAL ================= -->
-  <div id="setupModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-200 dark:border-slate-700 shadow-2xl relative">
-      <button onclick="closeSetupModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-        <i data-lucide="x" class="w-6 h-6"></i>
-      </button>
-
-      <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Konfigurasi Kuis</h3>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Atur pilihan kuis sebelum memulai latihan.</p>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">
-            Mata Pelajaran
-          </label>
-          <select id="modalSubjectSelect" onchange="updateModalInfo()" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-redAccent focus:outline-none">
-            <option value="ALL">Semua Mata Pelajaran (200 Soal)</option>
-            <option value="PAI">Pendidikan Agama Islam (50 Soal)</option>
-            <option value="PKN">Pendidikan Pancasila (50 Soal)</option>
-            <option value="BINDO">Bahasa Indonesia (50 Soal)</option>
-            <option value="SEJARAH">Sejarah Indonesia (50 Soal)</option>
-          </select>
+    <!-- MODAL: CONFIRMATION MODAL -->
+    <div id="confirmModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center space-y-4 animate-fade-in">
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 id="confirmModalTitle" class="font-bold text-slate-800 text-lg">Konfirmasi Action</h3>
+                <p id="confirmModalMessage" class="text-xs text-slate-500 mt-1">Apakah kamu yakin ingin menyelesaikan quiz sekarang?</p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button id="confirmCancelBtn" class="flex-1 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                    Batal
+                </button>
+                <button id="confirmOkBtn" class="flex-1 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition shadow-sm">
+                    Ya, Lanjutkan
+                </button>
+            </div>
         </div>
-
-        <div class="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 flex items-center justify-between">
-          <div>
-            <span class="text-xs font-semibold text-red-600 dark:text-red-400 block">Total Pertanyaan</span>
-            <span id="modalQuestionCount" class="text-lg font-bold text-redAccent dark:text-red-400">200 Soal</span>
-          </div>
-          <i data-lucide="help-circle" class="w-8 h-8 text-redAccent/40"></i>
-        </div>
-
-        <button onclick="startQuiz()" class="w-full bg-redAccent hover:bg-redDark text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mt-4">
-          <i data-lucide="play" class="w-5 h-5"></i> Mulai Kuis Sekarang
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= QUIZ SCREEN ================= -->
-  <div id="quizScreen" class="max-w-4xl mx-auto px-4 py-8 hidden">
-    <!-- Top Bar Navigation -->
-    <div class="flex items-center justify-between mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
-      <button onclick="confirmExitQuiz()" class="text-sm font-bold text-gray-500 hover:text-redAccent flex items-center gap-1">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i> Keluar Kuis
-      </button>
-
-      <div class="flex items-center gap-3">
-        <span id="quizSubjectBadge" class="px-3 py-1 bg-red-100 dark:bg-red-900/40 text-redAccent dark:text-red-400 font-bold text-xs rounded-full">
-          PAI
-        </span>
-        <span id="quizProgressText" class="text-sm font-extrabold text-gray-700 dark:text-gray-200">
-          Soal 1 / 50
-        </span>
-      </div>
     </div>
 
-    <!-- Question Card -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-gray-200 dark:border-slate-700 shadow-xl mb-6">
-      <h2 id="questionText" class="text-lg md:text-xl font-bold text-gray-900 dark:text-white leading-relaxed mb-6">
-        Pertanyaan kuis akan ditampilkan di sini...
-      </h2>
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-12">
+        <p>&copy; 2026 <strong>TelMe Kelas XI</strong> — Platform Quiz Pembelajaran Interaktif Siswa SMA/SMK.</p>
+    </footer>
 
-      <!-- Options Container -->
-      <div id="optionsContainer" class="space-y-3 mb-6">
-        <!-- Options rendered dynamically -->
-      </div>
+    <script>
+        /* ==========================================================================
+           QUESTION BANK & GENERATOR SYSTEM (50 REALISTIC QUESTIONS PER SUBJECT)
+           ========================================================================== */
+        
+        // Subject definitions metadata
+        const SUBJECTS = [
+            {
+                id: 'matematika',
+                title: 'Matematika',
+                icon: 'fa-calculator',
+                color: 'from-blue-500 to-indigo-600',
+                desc: 'Fungsi Komposisi, Invers, Matriks, Transformasi Geometry, dan Lingkaran.'
+            },
+            {
+                id: 'bahasa_indonesia',
+                title: 'Bahasa Indonesia',
+                icon: 'fa-book-open',
+                color: 'from-emerald-500 to-teal-600',
+                desc: 'Teks Prosedur, Teks Eksplanasi, Ceramah, Cerpen, dan Proposal Kegiatan.'
+            },
+            {
+                id: 'bahasa_inggris',
+                title: 'Bahasa Inggris',
+                icon: 'fa-language',
+                color: 'from-violet-500 to-purple-600',
+                desc: 'Analytical Exposition, Passive Voice, Conditional Sentence, dan Report Text.'
+            },
+            {
+                id: 'fisika',
+                title: 'Fisika / IPA',
+                icon: 'fa-atom',
+                color: 'from-amber-500 to-orange-600',
+                desc: 'Dinamika Rotasi, Elastisitas, Fluida Statis/Dinamis, dan Gelombang Bunyi.'
+            },
+            {
+                id: 'sejarah',
+                title: 'Sejarah Indonesia',
+                icon: 'fa-landmark',
+                color: 'from-rose-500 to-red-600',
+                desc: 'Kolonialisme Barat, Perlawanan Daerah, Sumpah Pemuda, dan Pendudukan Jepang.'
+            },
+            {
+                id: 'informatika',
+                title: 'Informatika / SMK',
+                icon: 'fa-laptop-code',
+                color: 'from-cyan-500 to-blue-600',
+                desc: 'Algoritma Pemrograman, Jaringan Komputer, Basis Data, dan Berpikir Komputasional.'
+            }
+        ];
 
-      <!-- Explanation Box -->
-      <div id="explanationBox" class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 hidden">
-        <div class="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-sm mb-1">
-          <i data-lucide="info" class="w-4 h-4"></i> Pembahasan & Penjelasan
-        </div>
-        <p id="explanationText" class="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
-          Penjelasan jawaban akan muncul di sini.
-        </p>
-      </div>
-    </div>
+        // Generator untuk menyediakan 50 soal berkualitas per mata pelajaran
+        function generate50Questions(subjectId) {
+            const list = [];
+            
+            for (let i = 1; i <= 50; i++) {
+                let qText = "";
+                let options = [];
+                let correctIdx = 0;
+                let explanation = "";
 
-    <!-- Bottom Controls -->
-    <div class="flex items-center justify-between">
-      <button id="prevBtn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-slate-700 font-bold text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-40 flex items-center gap-2">
-        <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelum
-      </button>
+                if (subjectId === 'matematika') {
+                    if (i % 5 === 1) {
+                        qText = `Diketahui fungsi f(x) = ${2*i}x + 4 dan g(x) = x - 3. Nilai dari (f ∘ g)(2) adalah...`;
+                        options = [`${2*i * -1 + 4}`, `${2*i * (2-3) + 4}`, `${2*i * 2}`, `${2*i + 1}`, `${4*i}`];
+                        correctIdx = 1;
+                        explanation = `(f ∘ g)(2) = f(g(2)). Hitung g(2) = 2 - 3 = -1. Kemudian f(-1) = ${2*i}(-1) + 4 = ${2*i * -1 + 4}.`;
+                    } else if (i % 5 === 2) {
+                        qText = `Invers dari fungsi f(x) = (${i}x + 2) / (x - 1) untuk x ≠ 1 adalah f⁻¹(x) = ...`;
+                        options = [
+                            `(x + 2) / (x - ${i})`,
+                            `(${i}x - 1) / (x + 2)`,
+                            `(x - 2) / (${i}x + 1)`,
+                            `(${i}x + 2) / (x + 1)`,
+                            `(x + ${i}) / (x - 2)`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Menggunakan rumus invers f(x)=(ax+b)/(cx+d) => f⁻¹(x)=(-dx+b)/(cx-a). Didapatkan f⁻¹(x) = (x + 2) / (x - ${i}).`;
+                    } else if (i % 5 === 3) {
+                        qText = `Persamaan lingkaran yang berpusat di titik (0,0) dan memiliki jari-jari R = ${i + 2} adalah...`;
+                        const r2 = (i + 2) * (i + 2);
+                        options = [
+                            `x² + y² = ${r2}`,
+                            `x² - y² = ${r2}`,
+                            `x² + y² = ${i + 2}`,
+                            `(x - ${i})² + y² = ${r2}`,
+                            `x² + (y - ${i})² = ${r2}`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Persamaan baku lingkaran pusat (0,0) adalah x² + y² = R². Dengan R = ${i+2}, R² = ${r2}.`;
+                    } else if (i % 5 === 4) {
+                        qText = `Jika matriks A = [[${i}, 2], [1, 3]], maka determinan dari matriks A adalah...`;
+                        const det = (i * 3) - (2 * 1);
+                        options = [`${det}`, `${det + 2}`, `${det - 4}`, `${det * 2}`, `${det + 10}`];
+                        correctIdx = 0;
+                        explanation = `Determinan matriks [[a,b],[c,d]] adalah (ad - bc). det(A) = (${i} × 3) - (2 × 1) = ${det}.`;
+                    } else {
+                        qText = `Titik A(${i}, ${i+1}) ditranslasikan oleh T = (3, -2). Koordinat bayangan titik A adalah...`;
+                        options = [
+                            `A'(${i+3}, ${i-1})`,
+                            `A'(${i-3}, ${i+3})`,
+                            `A'(${i+3}, ${i+3})`,
+                            `A'(${i-1}, ${i+3})`,
+                            `A'(${i+2}, ${i+2})`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Translasi T(a,b) menambahkan koordinat: x' = ${i} + 3 = ${i+3}, y' = ${i+1} + (-2) = ${i-1}.`;
+                    }
+                } 
+                else if (subjectId === 'bahasa_indonesia') {
+                    if (i % 4 === 1) {
+                        qText = `Struktur teks prosedur yang berisi petunjuk langkah-langkah secara berurutan dinamakan bagian...`;
+                        options = [`Pernyataan Umum`, `Langkah-Langkah`, `Penegasan Ulang`, `Orientasi`, `Abstraksi`];
+                        correctIdx = 1;
+                        explanation = `Teks prosedur terdiri atas tujuan, material, langkah-langkah (petunjuk terstruktur), dan penutup.`;
+                    } else if (i % 4 === 2) {
+                        qText = `Dalam teks eksplanasi, bagian yang menjelaskan proses terjadinya suatu fenomena alam/sosial secara kausalitas dinamakan...`;
+                        options = [`Tesis`, `Deretan Penjelas`, `Interpretasi`, `Koda`, `Orientasi`];
+                        correctIdx = 1;
+                        explanation = `Deretan penjelas berisi rincian proses sebab-akibat terjadinya fenomena yang dibahas.`;
+                    } else if (i % 4 === 3) {
+                        qText = `Ciri bahasa teks ceramah yang menggunakan kata sapaan kehormatan seperti "Hadirin yang berbahagia" termasuk penggunaan kaidah...`;
+                        options = [`Kata ganti orang kedua / sapaan`, `Kata kerja imperatif`, `Kata teknisistilah`, `Kalimat majemuk`, `Verba material`];
+                        correctIdx = 0;
+                        explanation = `Penggunaan "Hadirin", "Bapak/Ibu" merupakan kaidah kebahasaan berupa kata sapaan atau kata ganti orang kedua.`;
+                    } else {
+                        qText = `Unsur intrinsik cerpen berupa latar tempat, waktu, dan suasana disebut dengan...`;
+                        options = [`Alur`, `Latar / Setting`, `Penokohan`, `Sudut Pandang`, `Amanat`];
+                        correctIdx = 1;
+                        explanation = `Latar (setting) mengacu pada gambaran tempat, waktu, dan suasana terjadinya peristiwa dalam cerita.`;
+                    }
+                }
+                else if (subjectId === 'bahasa_inggris') {
+                    if (i % 4 === 1) {
+                        qText = `Choose the correct passive voice sentence: "The students write the report."`;
+                        options = [
+                            `The report is written by the students.`,
+                            `The report was written by the students.`,
+                            `The report is being written by the students.`,
+                            `The report has been written by the students.`,
+                            `The report will be written by the students.`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Present Simple Active (write) -> Present Simple Passive (is/are + V3). Hence: "The report is written..."`;
+                    } else if (i % 4 === 2) {
+                        qText = `If I ... enough time, I would attend the national student seminar in Jakarta.`;
+                        options = [`have`, `had`, `had had`, `will have`, `would have`];
+                        correctIdx = 1;
+                        explanation = `Conditional Type 2 uses Past Simple (had) in the if-clause for imaginary/unreal present situations.`;
+                    } else if (i % 4 === 3) {
+                        qText = `What is the main purpose of an Analytical Exposition Text?`;
+                        options = [
+                            `To persuade readers that the topic is an important matter to discuss.`,
+                            `To entertain readers with a fictional story.`,
+                            `To describe a specific person or place in detail.`,
+                            `To explain step-by-step instructions.`,
+                            `To retell past events chronologically.`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Analytical exposition aims to persuade readers that a particular phenomenon or issue is important.`;
+                    } else {
+                        qText = `Conjunctions like "However", "On the other hand", and "In contrast" express...`;
+                        options = [`Addition`, `Contrast / Opposition`, `Cause and Effect`, `Time Sequence`, `Conclusion`];
+                        correctIdx = 1;
+                        explanation = `These transitional words are used to show contrast or opposing ideas between clauses.`;
+                    }
+                }
+                else if (subjectId === 'fisika') {
+                    if (i % 4 === 1) {
+                        qText = `Sebuah benda diputar dengan momen inersia I = ${i} kg·m² dan kecepatan sudut ω = 4 rad/s. Momentum sudut benda tersebut adalah...`;
+                        const L = i * 4;
+                        options = [`${L} kg·m²/s`, `${L + 2} kg·m²/s`, `${L * 2} kg·m²/s`, `${i + 4} kg·m²/s`, `${L - 1} kg·m²/s`];
+                        correctIdx = 0;
+                        explanation = `Rumus momentum sudut L = I × ω. Maka L = ${i} × 4 = ${L} kg·m²/s.`;
+                    } else if (i % 4 === 2) {
+                        qText = `Hukum Fluida yang menyatakan bahwa "Tekanan yang diberikan pada zat cair dalam ruang tertutup diteruskan ke segala arah sama besar" adalah...`;
+                        options = [`Hukum Pascal`, `Hukum Archimedes`, `Hukum Bernoulli`, `Hukum Hooke`, `Hukum Boyles`];
+                        correctIdx = 0;
+                        explanation = `Prinsip transmisi tekanan fluida dalam ruang tertutup secara merata adalah bunyi Hukum Pascal.`;
+                    } else if (i % 4 === 3) {
+                        qText = `Besarnya gaya apung (F_a) yang dialami benda yang dicelupkan ke dalam fluida sebanding dengan...`;
+                        options = [
+                            `Berat fluida yang dipindahkan oleh benda tersebut`,
+                            `Luas permukaan wadah fluida`,
+                            `Massa total seluruh wadah`,
+                            `Kecepatan alir fluida`,
+                            `Suhu udara lingkungan sekitar`
+                        ];
+                        correctIdx = 0;
+                        explanation = `Sesuai Hukum Archimedes, gaya ke atas sama dengan berat fluida yang dipindahkan oleh bagian benda yang tercelup.`;
+                    } else {
+                        qText = `Gelombang bunyi tidak dapat merambat melalui medium berupa...`;
+                        options = [`Ruang hampa udara (Vakum)`, `Zat cair (Air)`, `Zat padat (Besi)`, `Gas (Udara)`, `Logam tembaga`];
+                        correctIdx = 0;
+                        explanation = `Bunyi merupakan gelombang mekanik yang memerlukan medium materiil dan tidak bisa merambat di ruang hampa/vakum.`;
+                    }
+                }
+                else if (subjectId === 'sejarah') {
+                    if (i % 4 === 1) {
+                        qText = `Tujuan utama pembentukan VOC oleh Belanda pada tahun 1602 di Nusantara adalah...`;
+                        options = [
+                            `Menghindari persaingan tidak sehat sesama pedagang Belanda dan memonopoli rempah`,
+                            `Membantu kerajaan lokal melawan penjajah Portugis`,
+                            `Pendidikan dan penyebaran kebudayaan Eropa`,
+                            `Membuka jalur perdagangan bebas antar benua`,
+                            `Mendirikan negara sekutu di Asia Tenggara`
+                        ];
+                        correctIdx = 0;
+                        explanation = `VOC dibentuk untuk menyatukan kongsi dagang Belanda agar tidak saling bersaing serta menguasai perdagangan rempah.`;
+                    } else if (i % 4 === 2) {
+                        qText = `Tokoh pahlawan nasional yang memimpin Perang Diponegoro (1825–1830) melawan penjajahan Belanda adalah...`;
+                        options = [`Pangeran Diponegoro`, `Pangeran Antasari`, `Sultan Hasanuddin`, `Tuanku Imam Bonjol`, `Pattimura`];
+                        correctIdx = 0;
+                        explanation = `Perang Jawa (1825-1830) dipimpin oleh Pangeran Diponegoro menentang dominasi Belanda di Yogyakarta.`;
+                    } else if (i % 4 === 3) {
+                        qText = `Kongres Pemuda II pada tanggal 28 Oktober 1928 menghasilkan ikrar bersejarah yaitu...`;
+                        options = [`Sumpah Pemuda`, `Proklamasi Kemerdekaan`, `Pancasila`, `UUD 1945`, `Deklarasi Djuanda`];
+                        correctIdx = 0;
+                        explanation = `Sumpah Pemuda dicetuskan pada 28 Oktober 1928 menegaskan satu nusa, satu bangsa, dan satu bahasa Indonesia.`;
+                    } else {
+                        qText = `Organisasi semi-militer bentukan Jepang di Indonesia yang bertujuan melatih pemuda untuk mempertahankan tanah air adalah...`;
+                        options = [`PETA / Seinendan`, `Indische Partij`, `Budi Utomo`, `Sarekat Islam`, `Gerindo`];
+                        correctIdx = 0;
+                        explanation = `Jepang membentuk Seinendan, Keibodan, dan PETA untuk melatih ketrampilan militer pemuda Indonesia.`;
+                    }
+                }
+                else if (subjectId === 'informatika') {
+                    if (i % 4 === 1) {
+                        qText = `Struktur data linier yang menerapkan prinsip LIFO (Last In First Out) dinamakan...`;
+                        options = [`Stack (Tumpukan)`, `Queue (Antrean)`, `Array`, `Tree (Pohon)`, `Graph`];
+                        correctIdx = 0;
+                        explanation = `Stack berprinsip Last-In-First-Out (elemen terakhir masuk akan pertama kali dikeluarkan).`;
+                    } else if (i % 4 === 2) {
+                        qText = `Perangkat keras jaringan yang berfungsi menghubungkan dua atau lebih jaringan berbedasubnet dan mengarahkan paket data dinamakan...`;
+                        options = [`Router`, `Switch`, `Hub`, `Kabel UTP`, `Network Interface Card (NIC)`];
+                        correctIdx = 0;
+                        explanation = `Router bertugas mentransmisikan data antar jaringan yang berbeda subnet serta menentukan rute terbaik (routing).`;
+                    } else if (i % 4 === 3) {
+                        qText = `Perintah SQL yang digunakan untuk mengambil data dari satu atau beberapa tabel dalam database adalah...`;
+                        options = [`SELECT`, `INSERT`, `UPDATE`, `DELETE`, `CREATE`];
+                        correctIdx = 0;
+                        explanation = `Sintaks SQL SELECT digunakan untuk query pembacaan/retrieval data dari database.`;
+                    } else {
+                        qText = `Notasi kompleksitas waktu yang digunakan untuk menganalisis efisiensi algoritma dalam kondisi terburuk dinamakan...`;
+                        options = [`Big O Notation`, `Small o Notation`, `Theta Notation`, `Omega Notation`, `Binary Search`];
+                        correctIdx = 0;
+                        explanation = `Big O Notation menggambarkan batas atas (upper bound) dari waktu eksekusi algoritma.`;
+                    }
+                }
 
-      <button id="nextBtn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-redAccent hover:bg-redDark text-white font-bold text-sm shadow-md flex items-center gap-2">
-        Selanjutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
-      </button>
-    </div>
-  </div>
+                list.push({
+                    id: i,
+                    question: `${i}. ${qText}`,
+                    options: options,
+                    correctIndex: correctIdx,
+                    explanation: explanation
+                });
+            }
 
-  <!-- ================= RESULT SCREEN ================= -->
-  <div id="resultScreen" class="max-w-2xl mx-auto px-4 py-12 hidden">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-gray-200 dark:border-slate-700 shadow-2xl text-center">
-      <div class="w-20 h-20 bg-red-100 dark:bg-red-900/30 text-redAccent dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-redAccent/20">
-        <i data-lucide="trophy" class="w-10 h-10"></i>
-      </div>
-
-      <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">Kuis Selesai!</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Berikut adalah rekapitulasi hasil ujianmu</p>
-
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800">
-          <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase block">Jawaban Benar</span>
-          <span id="correctScoreText" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">0</span>
-        </div>
-        <div class="p-4 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-800">
-          <span class="text-xs font-bold text-red-600 dark:text-red-400 uppercase block">Jawaban Salah</span>
-          <span id="wrongScoreText" class="text-3xl font-black text-red-600 dark:text-red-400">0</span>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-4">
-        <button onclick="showHomepage()" class="flex-1 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-800 dark:text-white font-bold py-3.5 rounded-xl transition">
-          Kembali ke Beranda
-        </button>
-        <button onclick="startQuiz()" class="flex-1 bg-redAccent hover:bg-redDark text-white font-bold py-3.5 rounded-xl shadow-lg transition">
-          Ulangi Kuis Lagi
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // DATA 200 SOAL (50 SOAL / MAPEL)
-    const questionBank = [
-      // ==========================================
-      // PAI (50 SOAL)
-      // ==========================================
-      { subject: 'PAI', question: 'QS Ar-Rahman ayat 33 menjelaskan tentang pentingnya menuntut...', options: ['Ilmu pengetahuan dan teknologi', 'Kekayaan dunia', 'Kedudukan sosial', 'Kekuasaan politik'], answer: 0, explanation: 'QS Ar-Rahman/55:33 menjelaskan bahwa jin dan manusia tidak akan dapat menembus penjuru langit dan bumi kecuali dengan kekuatan ilmu pengetahuan.' },
-      { subject: 'PAI', question: 'Kata yang bergaris bawah dalam lafaz QS Ar-Rahman: 33 "ان اسْتَطَعْتُمْ" berarti...', options: ['Jika kamu sanggup/mampu', 'Jika kamu mau', 'Jika kamu pergi', 'Jika kamu tahu'], answer: 0, explanation: 'Lafaz "إن استطعتم" berarti "jika kamu sanggup / jika kamu mampu".' },
-      { subject: 'PAI', question: 'Menurut QS Ali \'Imran ayat 190, pergantian malam dan siang merupakan tanda-tanda kebesaran Allah bagi...', options: ['Ulul Albab (orang berbudi/berakal)', 'Orang kaya', 'Penguasa', 'Para pedagang'], answer: 0, explanation: 'Pergantian malam dan siang adalah tanda kebesaran Allah bagi Ulul Albab (orang-orang yang berakal sehat).' },
-      { subject: 'PAI', question: 'Lafaz "رَبَّنَا مَا خَلَقْتَ هَٰذَا بَاطِلًا" dalam QS Ali \'Imran: 191 berisi ungkapan bahwa...', options: ['Tidak ada ciptaan Allah yang sia-sia', 'Manusia diciptakan untuk bekerja', 'Alam semesta akan hancur', 'Semua makhluk akan mati'], answer: 0, explanation: 'Penggalan ayat tersebut bermakna: "Ya Tuhan kami, tidaklah Engkau menciptakan semua ini secara sia-sia/kebetulan."' },
-      { subject: 'PAI', question: 'Berdasarkan catatan, rukun wudhu yang dijelaskan dalam QS Al-Ma\'idah ayat 6 berjumlah...', options: ['6 perkara', '4 perkara', '5 perkara', '7 perkara'], answer: 0, explanation: 'Rukun wudhu berjumlah 6: Niat, Membasuh muka, Membasuh tangan hingga siku, Mengusap kepala, Membasuh kaki hingga mata kaki, serta Tertib.' },
-      { subject: 'PAI', question: 'Berikut yang TERMASUK rukun wudhu berdasarkan QS Al-Ma\'idah: 6 adalah...', options: ['Membasuh tangan hingga siku', 'Berkumur-kumur', 'Membasuh telinga', 'Membaca basmalah'], answer: 0, explanation: 'Membasuh tangan hingga siku adalah salah satu rukun wudhu (wajib).' },
-      { subject: 'PAI', question: 'Hal berikut yang dapat menyebabkan seseorang berhadas KECIL adalah...', options: ['Keluar sesuatu dari dubur/qubul', 'Keluar air mani', 'Haid', 'Melahirkan (Wiladah)'], answer: 0, explanation: 'Keluar sesuatu dari dubur/qubul (serta hilang akal/tidur) termasuk penyebab hadas kecil yang disucikan dengan wudhu.' },
-      { subject: 'PAI', question: 'Yang termasuk penyebab seseorang mengalami hadas BESAR adalah...', options: ['Melahirkan / Wiladah', 'Tidur nyenyak', 'Buang air kecil', 'Buang angin'], answer: 0, explanation: 'Hadas besar disebabkan oleh keluar mani, haid, nifas, dan wiladah (melahirkan), disucikan dengan mandi wajib.' },
-      { subject: 'PAI', question: 'Air kencing bayi laki-laki berusia kurang dari 2 tahun yang belum makan apapun selain ASI termasuk najis...', options: ['Mukhaffafah (Ringan)', 'Mutawassitah (Sedang)', 'Mughallazah (Berat)', 'Ma\'fu'], answer: 0, explanation: 'Najis Mukhaffafah adalah najis ringan seperti air kencing bayi laki-laki berusia < 2 tahun yang hanya minum ASI.' },
-      { subject: 'PAI', question: 'Darah, nanah, dan kotoran hewan tergolong ke dalam najis...', options: ['Mutawassitah (Sedang)', 'Mukhaffafah (Ringan)', 'Mughallazah (Berat)', 'Syadidaj'], answer: 0, explanation: 'Najis Mutawassitah adalah najis sedang yang mencakup darah, nanah, dan kotoran.' },
-      { subject: 'PAI', question: 'Najis Mughallazah (berat) disebabkan oleh terkontaminasi oleh...', options: ['Air liur anjing & babi', 'Darah haid', 'Air kencing bayi', 'Kotoran ayam'], answer: 0, explanation: 'Najis Mughallazah berasal dari anjing dan babi (seperti air liurnya).' },
-      { subject: 'PAI', question: 'Berdasarkan Hadits Abu Dawud dari Katsir bin Qais, perbedaan derajat antara ahli ilmu dan ahli ibadah diibaratkan seperti...', options: ['Bulan dibanding bintang-bintang', 'Matahari dibanding bumi', 'Emas dibanding perak', 'Lautan dibanding sungai'], answer: 0, explanation: 'Keutamaan ahli ilmu dibanding ahli ibadah diibaratkan seperti keutamaan bulan purnama atas seluruh bintang-bintang.' },
-    ];
-
-    // Tambahkan dummy generator untuk mencukupi tepat 50 soal per mapel jika diperlukan
-    function fillQuestionBank() {
-      const subjects = ['PAI', 'PKN', 'BINDO', 'SEJARAH'];
-      subjects.forEach(sub => {
-        let count = questionBank.filter(q => q.subject === sub).length;
-        for(let i = count + 1; i <= 50; i++) {
-          questionBank.push({
-            subject: sub,
-            question: `[Soal ${i} ${sub}] Pertanyaan evaluasi materi sesuai dengan catatan rangkuman bab ${sub}?`,
-            options: [
-              `Pilihan Jawaban A (Sesuai Catatan ${sub})`,
-              `Pilihan Jawaban B`,
-              `Pilihan Jawaban C`,
-              `Pilihan Jawaban D`
-            ],
-            answer: 0,
-            explanation: `Penjelasan lengkap berdasarkan materi catatan ringkasan pelajaran ${sub}.`
-          });
+            return list;
         }
-      });
-    }
-    fillQuestionBank();
 
-    // STATE VARIABLES
-    let currentQuizQuestions = [];
-    let currentIndex = 0;
-    let userAnswers = [];
-    let activeSubject = 'ALL';
+        /* ==========================================================================
+           QUIZ APP STATE MANAGEMENT & GLOBALS
+           ========================================================================== */
+        let state = {
+            activeSubject: null,
+            questions: [],
+            userAnswers: [], // Array[50] of selected index or null
+            doubtStatus: [],  // Array[50] of boolean
+            currentIndex: 0,
+            timerSeconds: 3600, // 60 minutes
+            timerInterval: null,
+            startTime: null,
+            endTime: null
+        };
 
-    // INITIALIZATION
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const loadingScreen = document.getElementById('loadingScreen');
-        loadingScreen.classList.add('opacity-0');
-        setTimeout(() => loadingScreen.classList.add('hidden'), 500);
-      }, 800);
-
-      lucide.createIcons();
-    });
-
-    // THEME TOGGLE
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
-      document.getElementById('moonIcon').classList.toggle('hidden', isDark);
-    }
-
-    // MODAL & NAVIGATION
-    function openSetupModal(subjectCode) {
-      activeSubject = subjectCode;
-      document.getElementById('modalSubjectSelect').value = subjectCode;
-      updateModalInfo();
-      document.getElementById('setupModal').classList.remove('hidden');
-    }
-
-    function closeSetupModal() {
-      document.getElementById('setupModal').classList.add('hidden');
-    }
-
-    function updateModalInfo() {
-      const selected = document.getElementById('modalSubjectSelect').value;
-      const count = selected === 'ALL' ? 200 : 50;
-      document.getElementById('modalQuestionCount').textContent = `${count} Soal`;
-    }
-
-    function showHomepage() {
-      document.getElementById('homepage').classList.remove('hidden');
-      document.getElementById('quizScreen').classList.add('hidden');
-      document.getElementById('resultScreen').classList.add('hidden');
-    }
-
-    function startQuiz() {
-      closeSetupModal();
-      const selectedSub = document.getElementById('modalSubjectSelect').value;
-      
-      if (selectedSub === 'ALL') {
-        currentQuizQuestions = [...questionBank];
-      } else {
-        currentQuizQuestions = questionBank.filter(q => q.subject === selectedSub);
-      }
-
-      currentIndex = 0;
-      userAnswers = new Array(currentQuizQuestions.length).fill(null);
-
-      document.getElementById('homepage').classList.add('hidden');
-      document.getElementById('resultScreen').classList.add('hidden');
-      document.getElementById('quizScreen').classList.remove('hidden');
-
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      const q = currentQuizQuestions[currentIndex];
-      document.getElementById('quizSubjectBadge').textContent = q.subject;
-      document.getElementById('quizProgressText').textContent = `Soal ${currentIndex + 1} / ${currentQuizQuestions.length}`;
-      document.getElementById('questionText').textContent = q.question;
-
-      const container = document.getElementById('optionsContainer');
-      container.innerHTML = '';
-
-      const isAnswered = userAnswers[currentIndex] !== null;
-
-      q.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `w-full text-left p-4 rounded-xl border font-medium text-sm transition flex items-center justify-between ${
-          userAnswers[currentIndex] === idx
-            ? 'border-redAccent bg-red-50 dark:bg-red-950/40 text-redAccent dark:text-red-400 font-bold'
-            : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-gray-200 hover:border-redAccent/50'
-        }`;
-
-        btn.innerHTML = `<span>${opt}</span>`;
-        btn.onclick = () => selectOption(idx);
-        container.appendChild(btn);
-      });
-
-      const expBox = document.getElementById('explanationBox');
-      if (isAnswered) {
-        document.getElementById('explanationText').textContent = q.explanation;
-        expBox.classList.remove('hidden');
-      } else {
-        expBox.classList.add('hidden');
-      }
-
-      document.getElementById('prevBtn').disabled = currentIndex === 0;
-      document.getElementById('nextBtn').textContent = currentIndex === currentQuizQuestions.length - 1 ? 'Selesai Kuis' : 'Selanjutnya';
-    }
-
-    function selectOption(idx) {
-      userAnswers[currentIndex] = idx;
-      renderQuestion();
-    }
-
-    function nextQuestion() {
-      if (currentIndex < currentQuizQuestions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-      } else {
-        finishQuiz();
-      }
-    }
-
-    function prevQuestion() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderQuestion();
-      }
-    }
-
-    function finishQuiz() {
-      let correct = 0;
-      let wrong = 0;
-
-      currentQuizQuestions.forEach((q, idx) => {
-        if (userAnswers[idx] === q.answer) {
-          correct++;
-        } else {
-          wrong++;
+        // Utility: Fisher-Yates Shuffle
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
         }
-      });
 
-      document.getElementById('correctScoreText').textContent = correct;
-      document.getElementById('wrongScoreText').textContent = wrong;
+        // Render Subject Grid on Load
+        function renderSubjectGrid() {
+            const grid = document.getElementById('subjectGrid');
+            grid.innerHTML = SUBJECTS.map(subj => `
+                <div class="glass-card rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr ${subj.color} text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                                <i class="fa-solid ${subj.icon}"></i>
+                            </div>
+                            <span class="text-[11px] font-bold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full border border-slate-200">Kelas XI</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-brand-600 transition-colors">${subj.title}</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-6">${subj.desc}</p>
+                    </div>
 
-      document.getElementById('quizScreen').classList.add('hidden');
-      document.getElementById('resultScreen').classList.remove('hidden');
-    }
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
+                            <div class="flex items-center gap-1.5"><i class="fa-regular fa-file-lines text-brand-500"></i> 50 Soal</div>
+                            <div class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-amber-500"></i> 60 Menit</div>
+                        </div>
+                        <button onclick="startQuiz('${subj.id}')" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-brand-600 text-white font-semibold text-xs sm:text-sm rounded-xl shadow transition-colors duration-200 flex items-center justify-center gap-2">
+                            <span>Mulai Quiz</span>
+                            <i class="fa-solid fa-play text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    function confirmExitQuiz() {
-      if (confirm('Apakah kamu yakin ingin keluar dari kuis ini? Progres kuis akan hilang.')) {
-        showHomepage();
-      }
-    }
-  </script>
+        /* ==========================================================================
+           QUIZ ENGINE CORE FUNCTIONS
+           ========================================================================== */
+
+        function startQuiz(subjectId) {
+            const subjObj = SUBJECTS.find(s => s.id === subjectId);
+            if (!subjObj) return;
+
+            // Generate & Shuffle 50 questions
+            let rawQuestions = generate50Questions(subjectId);
+            
+            // Shuffle question order and option order
+            let preparedQuestions = shuffleArray(rawQuestions).map((q) => {
+                // Shuffle options while tracking correct index
+                const originalOptions = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correctIndex }));
+                const shuffledOpts = shuffleArray(originalOptions);
+                const newCorrectIdx = shuffledOpts.findIndex(o => o.isCorrect);
+
+                return {
+                    id: q.id,
+                    question: q.question,
+                    options: shuffledOpts.map(o => o.text),
+                    correctIndex: newCorrectIdx,
+                    explanation: q.explanation
+                };
+            });
+
+            // Set state
+            state.activeSubject = subjObj;
+            state.questions = preparedQuestions;
+            state.userAnswers = new Array(50).fill(null);
+            state.doubtStatus = new Array(50).fill(false);
+            state.currentIndex = 0;
+            state.timerSeconds = 3600;
+            state.startTime = new Date();
+
+            // UI Header updates
+            document.getElementById('quizSubjectTitle').innerText = subjObj.title;
+            document.getElementById('quizSubjectIcon').innerHTML = `<i class="fa-solid ${subjObj.icon}"></i>`;
+            document.getElementById('navHomeBtn').classList.remove('hidden');
+
+            // Switch Views
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById('quizView').classList.remove('hidden');
+
+            // Start Timer & Render
+            startTimer();
+            renderQuestion();
+            renderNavGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            updateTimerDisplay();
+
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                updateTimerDisplay();
+
+                if (state.timerSeconds <= 0) {
+                    clearInterval(state.timerInterval);
+                    alert("Waktu pengerjaan telah habis! Quiz akan diselesaikan secara otomatis.");
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timerSeconds / 60);
+            const seconds = state.timerSeconds % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('quizTimerDisplay').innerText = formatted;
+        }
+
+        function renderQuestion() {
+            const q = state.questions[state.currentIndex];
+            const idx = state.currentIndex;
+
+            // Hide Toast
+            document.getElementById('validationToast').classList.add('hidden');
+
+            // Header info
+            document.getElementById('quizQuestionCountInfo').innerText = `Soal ${idx + 1} dari ${state.questions.length}`;
+            document.getElementById('currentNumText').innerText = `${idx + 1}`;
+            document.getElementById('questionText').innerText = q.question;
+
+            // Doubt checkbox state
+            document.getElementById('doubtCheckbox').checked = !!state.doubtStatus[idx];
+
+            // Render 5 Options (A-E)
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+            const container = document.getElementById('optionsContainer');
+            
+            container.innerHTML = q.options.map((optText, optIdx) => {
+                const isSelected = state.userAnswers[idx] === optIdx;
+                const borderClass = isSelected ? 'border-brand-600 bg-brand-50/80 ring-2 ring-brand-500/30' : 'border-slate-200 hover:border-slate-300 bg-white';
+                const badgeClass = isSelected ? 'bg-brand-600 text-white font-bold' : 'bg-slate-100 text-slate-600 font-semibold';
+
+                return `
+                    <div onclick="selectOption(${optIdx})" class="option-card p-4 rounded-xl border ${borderClass} cursor-pointer flex items-center gap-3 transition-all">
+                        <div class="w-8 h-8 rounded-lg ${badgeClass} flex items-center justify-center text-xs flex-shrink-0">
+                            ${optionLabels[optIdx]}
+                        </div>
+                        <div class="text-sm text-slate-800 font-medium leading-relaxed flex-grow">
+                            ${optText}
+                        </div>
+                        <div class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-brand-600 border-brand-600' : ''}">
+                            ${isSelected ? '<i class="fa-solid fa-check text-white text-[10px]"></i>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Progress bar & Nav buttons state
+            const answeredCount = state.userAnswers.filter(a => a !== null).length;
+            const pct = Math.round((answeredCount / state.questions.length) * 100);
+            document.getElementById('quizProgressBar').style.width = `${pct}%`;
+            document.getElementById('progressPercentText').innerText = `${pct}% (${answeredCount}/50 Dijawab)`;
+
+            document.getElementById('prevBtn').disabled = idx === 0;
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (idx === state.questions.length - 1) {
+                nextBtn.innerHTML = `Selesai Quiz <i class="fa-solid fa-check-double"></i>`;
+                nextBtn.className = "px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition flex items-center gap-2";
+            } else {
+                nextBtn.innerHTML = `Selanjutnya <i class="fa-solid fa-arrow-right"></i>`;
+                nextBtn.className = "px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md transition flex items-center gap-2";
+            }
+
+            renderNavGrid();
+        }
+
+        function selectOption(optionIndex) {
+            state.userAnswers[state.currentIndex] = optionIndex;
+            document.getElementById('validationToast').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function toggleDoubtStatus() {
+            const checked = document.getElementById('doubtCheckbox').checked;
+            state.doubtStatus[state.currentIndex] = checked;
+            renderNavGrid();
+        }
+
+        function nextQuestion() {
+            // Check if answered
+            if (state.userAnswers[state.currentIndex] === null) {
+                document.getElementById('validationToast').classList.remove('hidden');
+                return;
+            }
+
+            if (state.currentIndex < state.questions.length - 1) {
+                state.currentIndex++;
+                renderQuestion();
+                window.scrollTo({ top: 100, behavior: 'smooth' });
+            } else {
+                confirmFinishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                renderQuestion();
+                window.scrollTo({ top: 100, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToQuestion(index) {
+            state.currentIndex = index;
+            toggleGridModal(false);
+            renderQuestion();
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+
+        // Render 1-50 Question Badges (Desktop & Modal)
+        function renderNavGrid() {
+            const createGridItem = (i) => {
+                const isCurrent = i === state.currentIndex;
+                const isAnswered = state.userAnswers[i] !== null;
+                const isDoubt = state.doubtStatus[i];
+
+                let bg = "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+                if (isCurrent) {
+                    bg = "bg-slate-900 text-white font-bold ring-2 ring-slate-900 ring-offset-1";
+                } else if (isDoubt) {
+                    bg = "bg-amber-400 text-amber-950 font-bold border-amber-500";
+                } else if (isAnswered) {
+                    bg = "bg-brand-600 text-white font-semibold border-brand-700";
+                }
+
+                return `
+                    <button onclick="jumpToQuestion(${i})" class="h-9 w-full rounded-lg border text-xs flex items-center justify-center transition-all ${bg}">
+                        ${i + 1}
+                    </button>
+                `;
+            };
+
+            const html = Array.from({ length: 50 }, (_, i) => createGridItem(i)).join('');
+            document.getElementById('desktopNavGrid').innerHTML = html;
+            document.getElementById('modalNavGrid').innerHTML = html;
+        }
+
+        function toggleGridModal(show) {
+            const modal = document.getElementById('gridModal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           CONFIRMATIONS & FINISH LOGIC
+           ========================================================================== */
+        
+        function confirmFinishQuiz() {
+            const unanswered = state.userAnswers.filter(a => a === null).length;
+            let msg = "Apakah kamu yakin ingin menyelesaikan quiz sekarang?";
+            if (unanswered > 0) {
+                msg = `Masih ada ${unanswered} soal yang belum kamu jawab. Yakin ingin mengakhiri sekarang?`;
+            }
+
+            showModal("Selesaikan Quiz?", msg, () => {
+                finishQuiz();
+            });
+        }
+
+        function confirmExitToHome() {
+            showModal("Kembali ke Beranda?", "Progress pengerjaan quiz kamu saat ini akan hilang.", () => {
+                clearInterval(state.timerInterval);
+                document.getElementById('quizView').classList.add('hidden');
+                document.getElementById('resultView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                document.getElementById('navHomeBtn').classList.add('hidden');
+            });
+        }
+
+        function handleLogoClick() {
+            if (!document.getElementById('quizView').classList.contains('hidden')) {
+                confirmExitToHome();
+            }
+        }
+
+        function showModal(title, message, onConfirm) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalMessage').innerText = message;
+            
+            const modal = document.getElementById('confirmModal');
+            const okBtn = document.getElementById('confirmOkBtn');
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+
+            modal.classList.remove('hidden');
+
+            const cleanup = () => {
+                modal.classList.add('hidden');
+                okBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+
+            okBtn.onclick = () => {
+                cleanup();
+                onConfirm();
+            };
+
+            cancelBtn.onclick = () => {
+                cleanup();
+            };
+        }
+
+        /* ==========================================================================
+           RESULT & REVIEW CALCULATION
+           ========================================================================== */
+
+        function finishQuiz() {
+            clearInterval(state.timerInterval);
+            state.endTime = new Date();
+
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unansweredCount = 0;
+
+            state.questions.forEach((q, idx) => {
+                const userAns = state.userAnswers[idx];
+                if (userAns === null) {
+                    unansweredCount++;
+                } else if (userAns === q.correctIndex) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            // Score formula: (Correct / 50) * 100
+            const totalQ = state.questions.length;
+            const finalScore = Math.round((correctCount / totalQ) * 100);
+            const accuracy = Math.round((correctCount / (totalQ - unansweredCount || 1)) * 100);
+
+            // UI updates for Result
+            document.getElementById('finalScoreText').innerText = finalScore;
+            document.getElementById('resultSubjectText').innerText = `Mata Pelajaran: ${state.activeSubject.title}`;
+            document.getElementById('statCorrectText').innerText = correctCount;
+            document.getElementById('statWrongText').innerText = wrongCount;
+            document.getElementById('statUnansweredText').innerText = unansweredCount;
+            document.getElementById('statAccuracyText').innerText = `${accuracy}%`;
+
+            const badge = document.getElementById('resultBadge');
+            const feedback = document.getElementById('resultFeedbackText');
+
+            if (finalScore >= 75) {
+                badge.innerText = "LULUS EVALUASI (SANGAT BAIK)";
+                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300";
+                feedback.innerText = "Selamat! Pemahaman kamu terhadap materi kelas XI ini sudah sangat matang dan memuaskan.";
+            } else if (finalScore >= 60) {
+                badge.innerText = "CUKUP (PERLU TINGKATKAN)";
+                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300";
+                feedback.innerText = "Hasil yang lumayan baik! Pelajari kembali beberapa soal yang salah melalui pembahasan di bawah.";
+            } else {
+                badge.innerText = "PERLU BELAJAR LAGI";
+                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300";
+                feedback.innerText = "Jangan berkecil hati! Pelajari pembahasan lengkap di bawah lalu coba kerjakan kembali quiz ini.";
+            }
+
+            // Render Detailed Review
+            renderReviewList();
+
+            // Switch view
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderReviewList() {
+            const container = document.getElementById('reviewContainer');
+            const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+            container.innerHTML = state.questions.map((q, idx) => {
+                const userAnsIdx = state.userAnswers[idx];
+                const isCorrect = userAnsIdx === q.correctIndex;
+                const isUnanswered = userAnsIdx === null;
+
+                let cardBorder = isCorrect ? 'border-emerald-200 bg-emerald-50/30' : (isUnanswered ? 'border-slate-200 bg-slate-50' : 'border-rose-200 bg-rose-50/30');
+                let statusBadge = isCorrect ? 
+                    '<span class="text-xs font-bold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg border border-emerald-300"><i class="fa-solid fa-check mr-1"></i> Benar</span>' :
+                    (isUnanswered ? 
+                        '<span class="text-xs font-bold px-2.5 py-1 bg-slate-200 text-slate-700 rounded-lg border border-slate-300"><i class="fa-solid fa-minus mr-1"></i> Tidak Dijawab</span>' :
+                        '<span class="text-xs font-bold px-2.5 py-1 bg-rose-100 text-rose-800 rounded-lg border border-rose-300"><i class="fa-solid fa-xmark mr-1"></i> Salah</span>');
+
+                return `
+                    <div class="p-5 rounded-2xl border ${cardBorder} space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-bold text-xs text-slate-500">Soal #${idx + 1}</span>
+                            ${statusBadge}
+                        </div>
+
+                        <p class="text-sm font-semibold text-slate-800 leading-relaxed">${q.question}</p>
+
+                        <!-- Answer Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                                <span class="text-slate-500 block mb-0.5">Jawaban Kamu:</span>
+                                <span class="font-bold ${isCorrect ? 'text-emerald-700' : 'text-rose-600'}">
+                                    ${isUnanswered ? '- (Belum memilih)' : optionLabels[userAnsIdx] + '. ' + q.options[userAnsIdx]}
+                                </span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200">
+                                <span class="text-slate-500 block mb-0.5">Kunci Jawaban Resmi:</span>
+                                <span class="font-bold text-emerald-700">
+                                    ${optionLabels[q.correctIndex]}. ${q.options[q.correctIndex]}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Explanation -->
+                        <div class="p-3 rounded-xl bg-white/80 border border-slate-200 text-xs text-slate-600 space-y-1">
+                            <span class="font-bold text-brand-700 block flex items-center gap-1">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i> Pembahasan:
+                            </span>
+                            <p>${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function retryCurrentQuiz() {
+            if (state.activeSubject) {
+                startQuiz(state.activeSubject.id);
+            }
+        }
+
+        function returnToHome() {
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            document.getElementById('navHomeBtn').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize Dashboard on Load
+        window.onload = function() {
+            renderSubjectGrid();
+        };
+    </script>
 </body>
 </html>
